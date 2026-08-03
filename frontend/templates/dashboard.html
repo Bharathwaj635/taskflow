@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · TaskFlow{% endblock %}
+{% block body %}
+{% include "partials/navbar.html" %}
+<main class="md:ml-60 pb-20 md:pb-10 px-4 md:px-8 pt-6 md:pt-8 max-w-6xl mx-auto">
+
+  <!-- Welcome banner -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-2">
+    <div>
+      <h1 id="welcome-heading" class="text-2xl md:text-3xl font-bold text-gray-900">Welcome back! 👋</h1>
+      <p class="text-sm text-gray-500 mt-0.5">Here's what's happening with your projects today.</p>
+    </div>
+    <div id="date-range" class="text-sm text-gray-500 bg-white border border-gray-200 rounded-lg px-3 py-2 self-start"></div>
+  </div>
+
+  <!-- Row 1 of stats -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+    <div class="card">
+      <p class="text-xs font-medium text-gray-500 mb-2">Total Projects</p>
+      <p id="stat-total-projects" class="text-2xl font-bold text-gray-900">–</p>
+      <p id="delta-total-projects" class="text-xs font-medium text-green-600 mt-1"></p>
+    </div>
+    <div class="card">
+      <p class="text-xs font-medium text-gray-500 mb-2">Active Projects</p>
+      <p id="stat-active-projects" class="text-2xl font-bold text-amber-600">–</p>
+      <p id="delta-active-projects" class="text-xs font-medium text-green-600 mt-1"></p>
+    </div>
+    <div class="card">
+      <p class="text-xs font-medium text-gray-500 mb-2">Completed Projects</p>
+      <p id="stat-completed-projects" class="text-2xl font-bold text-green-600">–</p>
+      <p id="delta-completed-projects" class="text-xs font-medium text-green-600 mt-1"></p>
+    </div>
+    <div class="card">
+      <p class="text-xs font-medium text-gray-500 mb-2">Pending Tasks</p>
+      <p id="stat-pending-tasks" class="text-2xl font-bold text-brand-600">–</p>
+      <p id="delta-pending-tasks" class="text-xs font-medium text-green-600 mt-1"></p>
+    </div>
+  </div>
+
+  <!-- Row 2 of stats -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="card">
+      <p class="text-xs font-medium text-gray-500 mb-2">Total Tasks</p>
+      <p id="stat-total-tasks" class="text-2xl font-bold text-gray-900">–</p>
+      <p id="delta-total-tasks" class="text-xs font-medium text-green-600 mt-1"></p>
+    </div>
+    <div class="card">
+      <p class="text-xs font-medium text-gray-500 mb-2">In Progress</p>
+      <p id="stat-in-progress-tasks" class="text-2xl font-bold text-amber-600">–</p>
+    </div>
+    <div class="card">
+      <p class="text-xs font-medium text-gray-500 mb-2">Completed Tasks</p>
+      <p id="stat-completed-tasks" class="text-2xl font-bold text-green-600">–</p>
+      <p id="delta-completed-tasks" class="text-xs font-medium text-green-600 mt-1"></p>
+    </div>
+    <div class="card">
+      <p class="text-xs font-medium text-gray-500 mb-2">Overdue Tasks</p>
+      <p id="stat-overdue-tasks" class="text-2xl font-bold text-red-600">–</p>
+      <p id="delta-overdue-tasks" class="text-xs font-medium text-red-500 mt-1"></p>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+    <div class="card">
+      <h2 class="font-semibold text-gray-900 mb-3">Tasks Overview</h2>
+      <div class="relative" style="height:220px">
+        <canvas id="tasks-overview-chart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h2 class="font-semibold text-gray-900 mb-3">Tasks Progress (Last 7 Days)</h2>
+      <div class="relative" style="height:220px">
+        <canvas id="tasks-progress-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent projects + upcoming deadlines -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div class="card">
+      <div class="flex items-center justify-between mb-3">
+        <h2 class="font-semibold text-gray-900">Recent Projects</h2>
+        <a href="/projects" class="text-sm text-brand-600 font-medium hover:underline">View all</a>
+      </div>
+      <ul id="recent-projects" class="divide-y divide-gray-100"></ul>
+    </div>
+    <div class="card">
+      <h2 class="font-semibold text-gray-900 mb-3">Upcoming Deadlines</h2>
+      <ul id="upcoming-deadlines" class="divide-y divide-gray-100"></ul>
+    </div>
+  </div>
+</main>
+{% include "partials/bottom_nav.html" %}
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

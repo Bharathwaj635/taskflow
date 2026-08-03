@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+{% block title %}Project · TaskFlow{% endblock %}
+{% block body %}
+{% include "partials/navbar.html" %}
+<main class="md:ml-60 pb-20 md:pb-10 px-4 md:px-8 pt-6 md:pt-8 max-w-6xl mx-auto" data-project-id="{{ project_id }}">
+  <a href="/projects" class="text-sm text-brand-600 mb-3 inline-flex items-center gap-1 hover:underline">
+    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+    Back to Projects
+  </a>
+
+  <div class="flex flex-wrap items-start justify-between gap-3 mb-1">
+    <div class="flex items-center gap-2">
+      <h1 id="project-name" class="text-2xl md:text-3xl font-bold text-gray-900">Loading…</h1>
+      <span id="project-status-badge" class="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-700"></span>
+    </div>
+    <div class="flex gap-2">
+      <button onclick="openEditProjectModal()" class="text-sm px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 flex items-center gap-1.5">
+        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5Z"/>
+        </svg>
+        Edit Project
+      </button>
+    </div>
+  </div>
+  <p id="project-description" class="text-gray-500 mb-4"></p>
+
+  <!-- Tabs -->
+  <div class="flex gap-1 border-b border-gray-200 mb-5 overflow-x-auto">
+    <button data-tab="overview" onclick="setTab('overview')" class="tab-btn px-4 py-2.5 text-sm font-medium border-b-2 whitespace-nowrap">Overview</button>
+    <button data-tab="tasks" onclick="setTab('tasks')" class="tab-btn px-4 py-2.5 text-sm font-medium border-b-2 whitespace-nowrap">Tasks</button>
+    <button data-tab="team" onclick="setTab('team')" class="tab-btn px-4 py-2.5 text-sm font-medium border-b-2 whitespace-nowrap">Team</button>
+    <span class="px-4 py-2.5 text-sm font-medium text-gray-300 cursor-not-allowed whitespace-nowrap" title="Coming soon">Files</span>
+    <span class="px-4 py-2.5 text-sm font-medium text-gray-300 cursor-not-allowed whitespace-nowrap" title="Coming soon">Timeline</span>
+    <span class="px-4 py-2.5 text-sm font-medium text-gray-300 cursor-not-allowed whitespace-nowrap" title="Coming soon">Analytics</span>
+  </div>
+
+  <!-- Overview tab -->
+  <div id="tab-overview">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div class="card">
+        <p class="text-xs font-medium text-gray-500 mb-2">Project Progress</p>
+        <p id="progress-pct" class="text-2xl font-bold text-brand-600 mb-2">0%</p>
+        <div class="w-full bg-gray-200 rounded-full h-2">
+          <div id="progress-bar" class="bg-brand-500 h-2 rounded-full transition-all" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="card">
+        <p class="text-xs font-medium text-gray-500 mb-2">Total Tasks</p>
+        <p id="stat-total" class="text-2xl font-bold text-gray-900">0</p>
+      </div>
+      <div class="card">
+        <p class="text-xs font-medium text-gray-500 mb-2">Completed</p>
+        <p id="stat-done" class="text-2xl font-bold text-green-600">0</p>
+      </div>
+      <div class="card">
+        <p class="text-xs font-medium text-gray-500 mb-2">In Progress / To Do</p>
+        <p class="text-2xl font-bold text-gray-900"><span id="stat-inprogress" class="text-amber-600">0</span> / <span id="stat-todo" class="text-gray-500">0</span></p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="font-semibold text-gray-900 mb-3">Team Members</h2>
+      <ul id="members-list" class="divide-y divide-gray-100"></ul>
+    </div>
+  </div>
+
+  <!-- Tasks tab -->
+  <div id="tab-tasks" class="hidden">
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex flex-wrap gap-2">
+        <button data-task-filter="" onclick="setTaskFilter('')" class="text-xs font-medium px-3 py-1.5 rounded-full bg-brand-500 text-white">All (<span id="tcount-all">0</span>)</button>
+        <button data-task-filter="todo" onclick="setTaskFilter('todo')" class="text-xs font-medium px-3 py-1.5 rounded-full bg-gray-100 text-gray-700">To Do (<span id="tcount-todo">0</span>)</button>
+        <button data-task-filter="in_progress" onclick="setTaskFilter('in_progress')" class="text-xs font-medium px-3 py-1.5 rounded-full bg-gray-100 text-gray-700">In Progress (<span id="tcount-in_progress">0</span>)</button>
+        <button data-task-filter="done" onclick="setTaskFilter('done')" class="text-xs font-medium px-3 py-1.5 rounded-full bg-gray-100 text-gray-700">Done (<span id="tcount-done">0</span>)</button>
+      </div>
+      <button onclick="openCreateTaskModal()" class="btn-primary text-sm px-4 py-2.5 flex items-center gap-1.5 flex-shrink-0">
+        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        Add Task
+      </button>
+    </div>
+
+    <div id="tasks-list" class="card divide-y divide-gray-100 !p-0"></div>
+  </div>
+
+  <!-- Team tab -->
+  <div id="tab-team" class="hidden">
+    <div class="flex items-center justify-between mb-4">
+      <p class="text-sm text-gray-500">Everyone with access to this project.</p>
+      <button onclick="openAddMemberModal()" class="btn-primary text-sm px-4 py-2.5 flex items-center gap-1.5 flex-shrink-0">
+        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+        Add Member
+      </button>
+    </div>
+    <div id="team-members-list" class="card divide-y divide-gray-100 !p-0"></div>
+  </div>
+</main>
+
+<!-- Add Member Modal -->
+<div id="add-member-modal" class="hidden fixed inset-0 bg-black/40 flex items-end md:items-center justify-center z-50">
+  <div class="bg-white rounded-t-2xl md:rounded-xl w-full md:max-w-md p-6">
+    <h2 class="text-lg font-bold mb-4">Add Member</h2>
+    <form id="add-member-form" class="space-y-4">
+      <input id="member-email" type="email" placeholder="Email address" class="input-field" required>
+      <select id="member-role" class="input-field">
+        <option value="member" selected>Member</option>
+        <option value="owner">Head</option>
+      </select>
+      <div class="flex gap-3">
+        <button type="button" onclick="closeAddMemberModal()" class="flex-1 py-3 rounded-lg border border-gray-300 text-gray-700">Cancel</button>
+        <button type="submit" class="flex-1 btn-primary">Add</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% include "partials/bottom_nav.html" %}
+
+<!-- Create Task Modal -->
+<div id="create-task-modal" class="hidden fixed inset-0 bg-black/40 flex items-end md:items-center justify-center z-50">
+  <div class="bg-white rounded-t-2xl md:rounded-xl w-full md:max-w-md p-6">
+    <h2 class="text-lg font-bold mb-4">New Task</h2>
+    <form id="create-task-form" class="space-y-4">
+      <input id="task-title" type="text" placeholder="Task title" class="input-field" required>
+      <textarea id="task-description" placeholder="Description (optional)" class="input-field" rows="2"></textarea>
+      <div class="grid grid-cols-2 gap-3">
+        <select id="task-priority" class="input-field">
+          <option value="low">Low priority</option>
+          <option value="medium" selected>Medium priority</option>
+          <option value="high">High priority</option>
+        </select>
+        <select id="task-status" class="input-field">
+          <option value="todo" selected>To Do</option>
+          <option value="in_progress">In Progress</option>
+          <option value="done">Done</option>
+        </select>
+      </div>
+      <input id="task-due-date" type="date" class="input-field">
+      <select id="task-assignee" class="input-field">
+        <option value="">Unassigned</option>
+      </select>
+      <div class="flex gap-3">
+        <button type="button" onclick="closeCreateTaskModal()" class="flex-1 py-3 rounded-lg border border-gray-300 text-gray-700">Cancel</button>
+        <button type="submit" class="flex-1 btn-primary">Create Task</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Assign Task Modal -->
+<div id="assign-task-modal" class="hidden fixed inset-0 bg-black/40 flex items-end md:items-center justify-center z-50">
+  <div class="bg-white rounded-t-2xl md:rounded-xl w-full md:max-w-md p-6">
+    <h2 class="text-lg font-bold mb-4">Assign Task</h2>
+    <form id="assign-task-form" class="space-y-4">
+      <select id="assign-task-select" class="input-field">
+        <option value="">Unassigned</option>
+      </select>
+      <div class="flex gap-3">
+        <button type="button" onclick="closeAssignModal()" class="flex-1 py-3 rounded-lg border border-gray-300 text-gray-700">Cancel</button>
+        <button type="submit" class="flex-1 btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Project Modal -->
+<div id="edit-project-modal" class="hidden fixed inset-0 bg-black/40 flex items-end md:items-center justify-center z-50">
+  <div class="bg-white rounded-t-2xl md:rounded-xl w-full md:max-w-md p-6">
+    <h2 class="text-lg font-bold mb-4">Edit Project</h2>
+    <form id="edit-project-form" class="space-y-4">
+      <input id="edit-project-name" type="text" placeholder="Project name" class="input-field" required>
+      <textarea id="edit-project-description" placeholder="Description (optional)" class="input-field" rows="3"></textarea>
+      <select id="edit-project-status" class="input-field">
+        <option value="active">Active</option>
+        <option value="completed">Completed</option>
+        <option value="on_hold">On Hold</option>
+      </select>
+      <input id="edit-project-due-date" type="date" class="input-field">
+      <div class="flex gap-3">
+        <button type="button" onclick="closeEditProjectModal()" class="flex-1 py-3 rounded-lg border border-gray-300 text-gray-700">Cancel</button>
+        <button type="submit" class="flex-1 btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/tasks.js') }}"></script>
+{% endblock %}

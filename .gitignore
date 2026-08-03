@@ -1,0 +1,17 @@
+# Backend
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.db
+backend/.env
+backend/instance/
+backend/.pytest_cache/
+
+# Frontend
+frontend/node_modules/
+git add frontend/static/css/output.css
+
+# OS/Editor
+.DS_Store
+.vscode/
+.idea/

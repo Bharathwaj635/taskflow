@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Settings · TaskFlow{% endblock %}
+{% block body %}
+{% include "partials/navbar.html" %}
+<main class="md:ml-60 pb-20 md:pb-10 px-4 md:px-8 pt-6 md:pt-8 max-w-2xl mx-auto">
+  <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-5">Settings</h1>
+
+  <div class="card mb-5">
+    <h2 class="font-semibold text-gray-900 mb-1">Profile</h2>
+    <p class="text-sm text-gray-500 mb-4">Update your display name.</p>
+    <form id="profile-form" class="space-y-4">
+      <div>
+        <label class="block text-xs font-medium text-gray-500 mb-1">Full name</label>
+        <input id="profile-name" type="text" class="input-field" required>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-500 mb-1">Username</label>
+        <input id="profile-username" type="text" class="input-field bg-gray-50" disabled>
+        <p class="text-xs text-gray-400 mt-1">Username changes aren't supported yet.</p>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-500 mb-1">Email</label>
+        <input id="profile-email" type="email" class="input-field bg-gray-50" disabled>
+        <p class="text-xs text-gray-400 mt-1">Email changes aren't supported yet.</p>
+      </div>
+      <p id="profile-message" class="text-sm hidden"></p>
+      <button type="submit" class="btn-primary px-5 py-2.5">Save Changes</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2 class="font-semibold text-gray-900 mb-1">Change Password</h2>
+    <p class="text-sm text-gray-500 mb-4">Choose a strong password you don't use elsewhere.</p>
+    <form id="password-form" class="space-y-4">
+      <div>
+        <label class="block text-xs font-medium text-gray-500 mb-1">Current password</label>
+        <input id="current-password" type="password" class="input-field" required autocomplete="current-password">
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-500 mb-1">New password</label>
+        <input id="new-password" type="password" class="input-field" required minlength="6" autocomplete="new-password">
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-gray-500 mb-1">Confirm new password</label>
+        <input id="confirm-password" type="password" class="input-field" required minlength="6" autocomplete="new-password">
+      </div>
+      <p id="password-message" class="text-sm hidden"></p>
+      <button type="submit" class="btn-primary px-5 py-2.5">Update Password</button>
+    </form>
+  </div>
+</main>
+{% include "partials/bottom_nav.html" %}
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+{% endblock %}

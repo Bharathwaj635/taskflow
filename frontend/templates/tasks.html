@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Tasks · TaskFlow{% endblock %}
+{% block body %}
+{% include "partials/navbar.html" %}
+<main class="md:ml-60 pb-20 md:pb-10 px-4 md:px-8 pt-6 md:pt-8 max-w-6xl mx-auto">
+  <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-5">Tasks</h1>
+
+  <div class="flex flex-wrap gap-2 mb-4">
+    <button data-filter="" onclick="setStatusFilter('')" class="text-xs font-medium px-3 py-1.5 rounded-full bg-brand-500 text-white">All (<span id="tcount-all">0</span>)</button>
+    <button data-filter="todo" onclick="setStatusFilter('todo')" class="text-xs font-medium px-3 py-1.5 rounded-full bg-gray-100 text-gray-700">To Do (<span id="tcount-todo">0</span>)</button>
+    <button data-filter="in_progress" onclick="setStatusFilter('in_progress')" class="text-xs font-medium px-3 py-1.5 rounded-full bg-gray-100 text-gray-700">In Progress (<span id="tcount-in_progress">0</span>)</button>
+    <button data-filter="done" onclick="setStatusFilter('done')" class="text-xs font-medium px-3 py-1.5 rounded-full bg-gray-100 text-gray-700">Done (<span id="tcount-done">0</span>)</button>
+  </div>
+
+  <div class="flex flex-wrap gap-3 mb-5 items-center">
+    <select id="priority-filter" onchange="applyExtraFilters()" class="input-field !py-2 !w-auto text-sm">
+      <option value="">All priorities</option>
+      <option value="low">Low</option>
+      <option value="medium">Medium</option>
+      <option value="high">High</option>
+    </select>
+    <select id="project-filter" onchange="applyExtraFilters()" class="input-field !py-2 !w-auto text-sm">
+      <option value="">All projects</option>
+    </select>
+    <label class="flex items-center gap-1.5 text-sm text-gray-500">
+      Due after
+      <input id="due-after-filter" type="date" onchange="applyExtraFilters()" class="input-field !py-2 !w-auto text-sm">
+    </label>
+    <label class="flex items-center gap-1.5 text-sm text-gray-500">
+      Due before
+      <input id="due-before-filter" type="date" onchange="applyExtraFilters()" class="input-field !py-2 !w-auto text-sm">
+    </label>
+    <button onclick="clearDateFilters()" class="text-xs text-gray-400 hover:text-gray-600" style="text-decoration: underline;">Clear dates</button>
+  </div>
+
+  <div id="tasks-list" class="card divide-y divide-gray-100 !p-0"></div>
+</main>
+{% include "partials/bottom_nav.html" %}
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/global-tasks.js') }}"></script>
+{% endblock %}

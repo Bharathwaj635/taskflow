@@ -1,0 +1,28 @@
+# Render Blueprint for TaskFlow
+# Place this file in the ROOT of your GitHub repo (same level as /backend and /frontend).
+# Then on Render: New + -> Blueprint -> select this repo -> Apply.
+# This creates the web service automatically with the correct settings below,
+# so you don't have to fill in the dashboard fields by hand.
+
+services:
+  - type: web
+    name: taskflow
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: "flask --app wsgi db upgrade && gunicorn wsgi:app --bind 0.0.0.0:$PORT"
+    healthCheckPath: /health
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite:///taskflow.db
+      - key: CORS_ORIGINS
+        value: https://taskflow.onrender.com
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: FLASK_ENV
+        value: production

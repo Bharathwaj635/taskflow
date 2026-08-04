@@ -1,17 +1,23 @@
-# Backend
+# --- Python / backend ---
 backend/venv/
-backend/__pycache__/
-backend/**/__pycache__/
-backend/*.db
-backend/.env
+**/__pycache__/
+*.pyc
 backend/instance/
-backend/.pytest_cache/
+*.db
+*.sqlite3
 
-# Frontend
+# --- Environment secrets (never commit real secrets) ---
+.env
+backend/.env
+
+# --- Node / frontend build tooling ---
 frontend/node_modules/
-git add frontend/static/css/output.css
 
-# OS/Editor
+# --- OS / editor cruft ---
 .DS_Store
 .vscode/
 .idea/
+
+# NOTE: frontend/static/css/output.css is intentionally NOT ignored.
+# Render only runs `pip install`, not `npm run build:css`, so the
+# compiled Tailwind CSS must be committed to the repo.
